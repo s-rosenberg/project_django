@@ -7,3 +7,8 @@ path() args:
 ### settings.py
 manejar module-level variables
 entre ellas: bbdd configurations
+por default toma SQLite. Esta buena para pruebitas pero no se recomienda para real development
+para cambiar y mas doc https://docs.djangoproject.com/en/4.1/ref/settings/#std-setting-DATABASES
+
+### secrets
+no pushear el SECRET_KEY -> se puede usar variables de entorno (para development, no conviene para produ)
