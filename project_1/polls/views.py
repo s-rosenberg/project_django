@@ -2,7 +2,10 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.template import loader
 from django.urls import reverse
+from django.views import generic
 from .models import Question, Choice
+
+##################### VIEWS DEFINIDOS COMO FUNCIONES ##############################
 
 def index_old(request) -> HttpResponse:
     latest_question_list = Question.objects.order_by('-pub_date')[:5]
@@ -39,6 +42,30 @@ def detail(request, question_id:int) -> HttpResponse:
 def results(request, question_id:int) -> HttpResponse:
     question = get_object_or_404(Question, pk=question_id)
     return render(request, template_name='polls/results.html', context= {'question': question}) 
+
+##################### VIEWS DEFINIDOS COMO CLASES ##############################
+############################# GENERICAS ########################################
+
+class IndexView(generic.ListView):
+    template_name = 'polls/index.html'
+    context_object_name = 'latest_question_list'
+
+    def get_queryset(self):
+        return Question.objects.order_by('-pub_date')[:5]
+
+# las vistas genericas necesitan saber sobre que modelo actuaran (para eso se usa el attr model)
+# DetailView espera que la primary key este en la URL -> por eso se cambia de question_id a pk en polls/urls.py
+# se crea el attr template_name ya que por default es <app name>/<model name>_detail.html
+# generic views doc: https://docs.djangoproject.com/en/4.1/topics/class-based-views/
+
+class DetailView(generic.DeleteView):
+    model = Question
+    template_name = 'polls/detail.html'
+    
+class ResultsView(generic.DeleteView):
+    model = Question
+    template_name = 'polls/results.html'
+
 
 def vote(request, question_id:int) -> HttpResponse:
     question = get_object_or_404(Question, pk=question_id)
