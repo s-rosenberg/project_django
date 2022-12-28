@@ -9,7 +9,18 @@
 </head>
 
 <body>
-    {{ question }}
+    <h1> {{ question.question_text }}</h1>
+    <ul>
+        {% for choice in question.choice_set.all %}
+            <li>{{ choice.choice_text }}</li> 
+        {% endfor %}
+        
+    </ul>
 </body>
 
+<!-- 
+    se usan corchetes con porcentajes para escribir codigo de python dentro del template 
+    es necesario cerrar el bloque de codigo para un for o un if, etc
+    mas data sobre templates https://docs.djangoproject.com/en/4.1/topics/templates/ 
+-->
 </html>
