@@ -37,7 +37,8 @@ def detail(request, question_id:int) -> HttpResponse:
     return render(request, template_name='polls/detail.html', context={'question': question})
 
 def results(request, question_id:int) -> HttpResponse:
-    return HttpResponse(f"You're looking at the results of question {question_id}")    
+    question = get_object_or_404(Question, pk=question_id)
+    return render(request, template_name='polls/results.html', context= {'question': question}) 
 
 def vote(request, question_id:int) -> HttpResponse:
     question = get_object_or_404(Question, pk=question_id)
@@ -46,7 +47,7 @@ def vote(request, question_id:int) -> HttpResponse:
     except (KeyError, Choice.DoesNotExist):
         context = {
             'question':question,
-            'error_message': "You did'nt select a choice"
+            'error_message': "You didn't select a choice"
         }
         return render(request, template_name= 'polls/detail.html', context=context)
     else:
