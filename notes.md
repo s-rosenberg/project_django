@@ -32,3 +32,12 @@ para filtrar un queryset por atributo de modelos se usa:
 `ATTR_NAME__OPERADOR`
 con el doble "_" entre uno y otro.
 [Lista de operadores](https://www.w3schools.com/django/django_queryset_filter.php)
+
+
+# Testing
+
+## rule of thumb xd
+
+- separate TestClass for each model or view
+- a separate test method for each set of conditions you want to test
+- test method names that describe their function
