@@ -1,6 +1,7 @@
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.template import loader
+from django.utils import timezone
 from django.urls import reverse
 from django.views import generic
 from .models import Question, Choice
@@ -51,7 +52,9 @@ class IndexView(generic.ListView):
     context_object_name = 'latest_question_list'
 
     def get_queryset(self):
-        return Question.objects.order_by('-pub_date')[:5]
+        return Question.objects.filter(
+            pub_date__lte=timezone.now() # filtros: 
+            ).order_by('-pub_date')[:5]
 
 # las vistas genericas necesitan saber sobre que modelo actuaran (para eso se usa el attr model)
 # DetailView espera que la primary key este en la URL -> por eso se cambia de question_id a pk en polls/urls.py
