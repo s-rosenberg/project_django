@@ -11,7 +11,8 @@ class Question(models.Model):
         return self.question_text
 
     def was_published_recently(self) -> bool:
-        return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
+        now = timezone.now()
+        return now >= self.pub_date >= now - datetime.timedelta(days=1)
 
 # EXPLICACION DE RELACION ENTRE QUESTION & CHOICE
 # Give the Question a couple of Choices. The create call constructs a new
