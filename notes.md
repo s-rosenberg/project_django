@@ -26,3 +26,9 @@ makemigrations sirve para que Django sepa que se generaron cambios en los modelo
 genera un archivo num_initial.py con la data de los modelos a crear
 
 **hint:** *python manage.py check checkea si habra problemas sin realizar la migracion* 
+
+### filtros
+para filtrar un queryset por atributo de modelos se usa:
+`ATTR_NAME__OPERADOR`
+con el doble "_" entre uno y otro.
+[Lista de operadores](https://www.w3schools.com/django/django_queryset_filter.php)
