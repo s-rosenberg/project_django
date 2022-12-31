@@ -67,6 +67,8 @@ class IndexView(generic.ListView):
 # se crea el attr template_name ya que por default es <app name>/<model name>_detail.html
 # generic views doc: https://docs.djangoproject.com/en/4.1/topics/class-based-views/
 
+# TODO evitar detail y results para question que no tengan choices
+
 class DetailView(generic.DetailView):
     model = Question
     template_name = 'polls/detail.html'
@@ -76,7 +78,7 @@ class DetailView(generic.DetailView):
         Excluye Question no publicada aun
         """
         return get_queryset_older_than_now()
-    
+        
 class ResultsView(generic.DetailView):
     model = Question
     template_name = 'polls/results.html'

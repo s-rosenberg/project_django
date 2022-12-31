@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.utils import timezone
 from django.urls import reverse
+from typing import List
 from .models import Question
 import datetime
 
@@ -43,6 +44,19 @@ def create_question(question_text: str, days: int) -> Question:
     time = timezone.now() + datetime.timedelta(days=days)
     return Question.objects.create(question_text=question_text, pub_date=time)
 
+def create_question_with_choices(question_text:str, days: int) -> Question:
+    question = create_question(question_text=question_text, days=days)
+    create_choices(question)
+    return question
+
+def create_choices(question:Question):
+    """
+    Crear choices para una question en especifico
+    """
+    question.choice_set.create(choice_text='Choice 1', votes=0)
+    question.choice_set.create(choice_text='Choice 2', votes=0)
+
+
 class QuestionIndexViewTests(TestCase):
     def test_no_questions(self):
         """
@@ -57,7 +71,7 @@ class QuestionIndexViewTests(TestCase):
         """
         Questions con pub_date pasadas deben estar en la index page
         """
-        question = create_question(question_text='Past question.', days=-30)
+        question = create_question_with_choices(question_text='Past question.', days=-30)
         response = self.client.get(reverse('polls:index'))
         self.assertQuerysetEqual(
             response.context['latest_question_list'],
@@ -68,7 +82,7 @@ class QuestionIndexViewTests(TestCase):
         """
         Questions con pub_date en el futuro no deben estar en la index page
         """
-        create_question(question_text="Future question.", days=30)
+        create_question_with_choices(question_text="Future question.", days=30)
         response = self.client.get(reverse('polls:index'))
         self.assertContains(response, "No polls are available")
         self.assertQuerysetEqual(
@@ -80,8 +94,8 @@ class QuestionIndexViewTests(TestCase):
         """
         Solo questions del pasado deben estar en la index page
         """
-        past_question = create_question(question_text='Past question.', days=-30)
-        create_question(question_text='Future question.', days=30)
+        past_question = create_question_with_choices(question_text='Past question.', days=-30)
+        create_question_with_choices(question_text='Future question.', days=30)
         response = self.client.get(reverse('polls:index'))
         self.assertQuerysetEqual(
             response.context['latest_question_list'],
@@ -92,14 +106,40 @@ class QuestionIndexViewTests(TestCase):
         """
         Solo questions del pasado deben estar en la index page
         """
-        past_question_1 = create_question(question_text='Past question 1.', days=-30)
-        past_question_2 = create_question(question_text='Past question 2.', days=-3)
+        past_question_1 = create_question_with_choices(question_text='Past question 1.', days=-30)
+        past_question_2 = create_question_with_choices(question_text='Past question 2.', days=-3)
         response = self.client.get(reverse('polls:index'))
         self.assertQuerysetEqual(
             response.context['latest_question_list'],
             [past_question_2, past_question_1],
         )
 
+    def test_question_with_choices(self):
+        """
+        question con choices deben estar en la index page y debe mostrar su texto
+        """
+        question = create_question_with_choices(question_text='Question with choices.', days=-1)
+        response = self.client.get(reverse('polls:index'))
+        self.assertQuerysetEqual(
+            response.context['latest_question_list'],
+            [question]
+        )
+
+    def test_question_with_no_choices(self):
+        question = create_question(question_text='Question with no choices.', days=-1)
+        response = self.client.get(reverse('polls:index'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "No polls are available")
+        self.assertQuerysetEqual(response.context['latest_question_list'],[])
+
+    def test_question_with_and_withour_choices(self):
+        question_with_choices = create_question_with_choices(question_text='Question with choices.', days=-1)
+        question_without_choices = create_question(question_text='Question with no choices.', days=-1)
+        response = self.client.get(reverse('polls:index'))
+        self.assertQuerysetEqual(
+            response.context['latest_question_list'],
+            [question_with_choices]
+        )
 def generic_future_question_test(test_case_class:TestCase, urlpattern:str) -> None:
     future_question = create_question(question_text='Future question.', days=2)
     url = reverse(urlpattern, args=(future_question.id,))
@@ -142,6 +182,7 @@ class QuestionResultsViewTests(TestCase):
         generic_past_question_test(self, 'polls:results')
 
 # TODO test case para question with no choices (estaria en el index view)
+# TODO modificar tests para que creen las choices 
 """
 Ejercicio:
 We ought to add a similar get_queryset method to ResultsView and create a new test class for that view. 
