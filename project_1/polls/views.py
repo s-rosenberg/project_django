@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.views import generic
 from django.db.models.query import QuerySet
 from .models import Question, Choice
+from typing import Any
 
 ##################### VIEWS DEFINIDOS COMO FUNCIONES ##############################
 
@@ -69,25 +70,29 @@ class IndexView(generic.ListView):
 
 # TODO evitar detail y results para question que no tengan choices
 
-class DetailView(generic.DetailView):
+class GenericDetailView(generic.DeleteView):
+    def get_queryset(self):
+        """
+        Excluye Question no publicada aun
+        """
+        return get_queryset_older_than_now()
+    
+    def get_object(self, queryset: QuerySet[Question] = None) -> Question:
+        question = super().get_object(queryset)
+        if list(question.choice_set.all()) != []:
+            return question
+        else: raise Http404(f'No choices found for question {question.id}')
+
+class DetailView(GenericDetailView):
     model = Question
     template_name = 'polls/detail.html'
 
-    def get_queryset(self):
-        """
-        Excluye Question no publicada aun
-        """
-        return get_queryset_older_than_now()
+    
         
-class ResultsView(generic.DetailView):
+class ResultsView(GenericDetailView):
     model = Question
     template_name = 'polls/results.html'
 
-    def get_queryset(self):
-        """
-        Excluye Question no publicada aun
-        """
-        return get_queryset_older_than_now()
 
 def vote(request, question_id:int) -> HttpResponse:
     question = get_object_or_404(Question, pk=question_id)
