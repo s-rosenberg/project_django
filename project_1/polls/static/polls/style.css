@@ -1,0 +1,8 @@
+li a{
+    color: green;
+}
+
+body {
+    background: white url("images/background.jpg") no-repeat;
+}
+/* siempre usar relative path entre files de static folder */
