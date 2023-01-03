@@ -30,7 +30,9 @@ class QuestionAdminSeparator(admin.ModelAdmin):
     # cada tupla del fieldset es (Nombre, fields_dict)
     list_display = ('question_text','pub_date','was_published_recently')
     # list_display son los campos del Model que se mostraran
-    
+    list_filter = ['pub_date']
+    # list_filter para agregar filtros 
+    search_fields = ['question_text']
 admin.site.register(Question, QuestionAdminSeparator)
 
 # # agregar Choices a Questions 
