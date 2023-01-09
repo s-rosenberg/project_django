@@ -21,7 +21,7 @@ Crear tablas de bbdd y otras dependencias de INSTALLED_APPS en settings.py
 python manage.py migrate
 ```
 
-### Agregar app 
+### Agregar app models a bbdd
 ```bash
 python manage.py makemigrations NOMBRE_APP
 ```
