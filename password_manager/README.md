@@ -29,4 +29,7 @@ Crear una app de password manager usando [Django](https://www.djangoproject.com/
 ### Forms
 - Guardar Password
 - Cambiar Password
+- Login?
+- Register?
+
 
