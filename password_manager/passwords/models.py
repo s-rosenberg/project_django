@@ -10,7 +10,7 @@ class SavedPassword(models.Model):
     username = models.CharField(max_length=50)
     password = models.CharField(max_length=50)
     site = models.ForeignKey(Site, on_delete=models.CASCADE) # esto ta mal creo
-    user = models.ForeignKey(User, on_delete=models.CASCADE) # idem
+    # user = models.ForeignKey(User, on_delete=models.CASCADE) # idem
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
