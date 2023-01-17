@@ -7,15 +7,18 @@ def save_password(request:HttpRequest) -> HttpResponse:
     if request.method == 'POST':
         form = PasswordForm(request.POST)
         if form.is_valid():
-            user = form.cleaned_data['user']
+            username = form.cleaned_data['user']
             password = form.cleaned_data['password']
             site_name = form.cleaned_data['site']
             site_url = form.cleaned_data['site_url']
             site = Site(site_name=site_name, site_url=site_url)
+            if request.user.is_authenticated:
+                logged_user = request.user
             saved_password = SavedPassword(
-                username=user, 
+                username=username, 
                 password=password,
-                site=site
+                site=site,
+                user=logged_user
                 )
             site.save()
             saved_password.save()
@@ -24,6 +27,7 @@ def save_password(request:HttpRequest) -> HttpResponse:
         form = PasswordForm()
     return render(request, 'passwords/save_password.html', {'form':form})
 
-# def new_password(request):
+
+# def new_password(request)
 #     form = PasswordForm()
 #     return render(request, template_name='passwords/save_password.html')
