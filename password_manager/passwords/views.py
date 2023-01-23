@@ -1,5 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.http import HttpResponse, HttpRequest
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+from django import forms
+
 from .forms import PasswordForm
 from .models import SavedPassword, Site
 
@@ -27,7 +32,22 @@ def save_password(request:HttpRequest) -> HttpResponse:
         form = PasswordForm()
     return render(request, 'passwords/save_password.html', {'form':form})
 
-
+def register_user(request:HttpRequest) -> HttpResponse:
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('../accounts/login')
+        else:
+            form = UserCreationForm()
+            context = {
+                'error':'User already exists',
+                'form':form
+                }
+            return render(request, template_name='registration/register.html', context=context)
+    else:
+        form = UserCreationForm()
+        return render(request, 'registration/register.html', {'form':form})
 # def new_password(request)
 #     form = PasswordForm()
 #     return render(request, template_name='passwords/save_password.html')
