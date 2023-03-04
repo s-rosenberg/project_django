@@ -70,7 +70,7 @@ class IndexView(generic.ListView):
 
 # TODO evitar detail y results para question que no tengan choices
 
-class GenericDetailView(generic.DeleteView):
+class GenericDetailView(generic.DetailView):
     def get_queryset(self):
         """
         Excluye Question no publicada aun
